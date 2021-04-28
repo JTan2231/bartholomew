@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import cv2
 import sys
@@ -10,6 +10,7 @@ import tflite_runtime.interpreter as tflite
 
 from time import time
 from cv_bridge import CvBridge, CvBridgeError
+from std_msgs.msg import Float
 from sensor_msgs import point_cloud2
 from sensor_msgs.msg import Image, PointCloud2
 
@@ -20,6 +21,8 @@ class Vision:
     def __init__(self):
         self.image_sub = message_filters.Subscriber("/camera/color/image_raw", Image)
         self.depth_sub = message_filters.Subscriber("/camera/depth/image_raw", Image)
+
+        self.heading_pub = rospy.Publisher("/bartholomew/object_heading", Float, 1)
 
         self.time_sync = message_filters.TimeSynchronizer([self.image_sub, self.depth_sub], 1)
         self.time_sync.registerCallback(self.callback)
@@ -103,6 +106,8 @@ class Vision:
         filtered_boxes = boxes[where_human]
         filtered_probs = class_probs[where_human]
 
+        object_heading = None
+
         if filtered_boxes.shape[0] > 0:
             best_box = filtered_boxes[np.argmax(filtered_probs)]
 
@@ -137,6 +142,8 @@ class Vision:
             object_heading = np.arctan2(xw, z) * 180 / 3.14159
 
             t2 = time()
+
+            self.heading_pub.publish(object_heading)
 
             print(f"t2 - t1: {t2-t1} -> object_location: {(xw, yw, z, object_heading)}")#{object_heading}")
 
