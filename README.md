@@ -1,5 +1,5 @@
 # Bartholomew
-Selection of Bartholomew algorithms. Requires [TensorFlow Lite Runtime](https://www.tensorflow.org/lite/guide/python) version `2.5.0` and at least
+Selection of publicly available Bartholomew algorithms. Requires [TensorFlow Lite Runtime](https://www.tensorflow.org/lite/guide/python) version `2.5.0` and at least
 Python 3.
 
 Currently, the only algorithm in the repository is his vision capabilities.
